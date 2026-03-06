@@ -2,7 +2,7 @@
 
 > Nextflow DSL2 pipeline for alignment, SNV/indel calling, structural variant calling, haplotype phasing, and CpG methylation profiling from PacBio HiFi whole genome sequencing data.  
 > Designed for the CVID multi-omic study — 20 CVID patients + 50 controls.  
-> Platform: **CSC Puhti** | Executor: **SLURM** | Containers: **Singularity**
+> Platform: **CSC Arkku** | Executor: **SLURM** | Containers: **Singularity**
 
 ---
 
@@ -74,8 +74,7 @@ Unaligned HiFi BAM  (.bam + .bam.pbi)
 ## Requirements
 
 - [Nextflow](https://www.nextflow.io/) >= 23.04
-- Singularity/Apptainer (available on Puhti via `module load singularity-apptainer`)
-- CSC Puhti project account (`project_2xxxxxxx`)
+- Singularity/Apptainer (available on Arkku via `module load singularity-apptainer`)
 - Reference genome: `hg38.fa` + `hg38.fa.fai` (samtools faidx)
 - Optional: PacBio human tandem repeat BED for improved pbsv accuracy
 
@@ -86,7 +85,7 @@ Unaligned HiFi BAM  (.bam + .bam.pbi)
 
 ## Samplesheet
 
-Create `samplesheet.csv` with local paths to unaligned BAMs on Puhti scratch:
+Create `samplesheet.csv` with local paths to unaligned BAMs on Arkku scratch:
 
 ```csv
 sample,condition,bam
@@ -122,7 +121,7 @@ Edit `nextflow.config` before running:
 ## Running the Pipeline
 
 ```bash
-# Load required modules on Puhti
+# Load required modules on Arkku
 module load nextflow
 module load singularity-apptainer
 
@@ -445,4 +444,4 @@ Key biological question: in CVID patients with LOH at a gene locus, does the rem
 
 ---
 
-*CVID Multi-Omic Study — CSC Puhti | PacBio HiFi WGS pipeline*
+*CVID Multi-Omic Study — CSC Arkku | PacBio HiFi WGS pipeline*
