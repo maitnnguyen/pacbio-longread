@@ -276,7 +276,7 @@ results/
 # Filter PASS only
 bcftools view -f PASS sample.deepvariant.vcf.gz -O z -o sample.pass.vcf.gz
 
-# Annotate with VEP or ANNOVAR against known CVID genes
+# Annotate with VEP or ANNOVAR against known immunodeficiency genes
 # Key genes: TNFRSF13B, NFKB1, IKBKG, AICDA, PIK3CD, PIK3R1, CARD11
 bcftools view sample.pass.vcf.gz chr4 chr12 chr14 chr17 chrX \
     -O z -o sample.cvid_loci.vcf.gz
@@ -286,7 +286,7 @@ bcftools view sample.pass.vcf.gz chr4 chr12 chr14 chr17 chrX \
 ```r
 library(ASCAT)
 # Use phased SNV VCF B-allele frequencies to detect LOH regions
-# Compare CVID vs control allele imbalance at known CVID gene loci
+# Compare disease vs control allele imbalance at known immunodeficiency gene loci
 ```
 
 ---
@@ -298,7 +298,7 @@ library(ASCAT)
 SURVIVOR merge sample_vcfs.txt 1000 2 1 1 0 50 sample.merged.vcf
 ```
 
-**Annotate against CVID-relevant loci:**
+**Annotate against immunodeficiency-relevant loci:**
 ```bash
 # IgH locus (chr14:105,583,000-106,879,000), NFKB1 (chr4), AICDA (chr12)
 bedtools intersect \
@@ -315,12 +315,12 @@ library(ggplot2)
 vcf <- readVcf("results/sv_cohort/cohort.sniffles.vcf.gz", "hg38")
 sv_burden <- data.frame(
   sample    = samples(header(vcf)),
-  condition = c(rep("CVID", 20), rep("control", 50)),
+  condition = c(rep("disease", 20), rep("control", 50)),
   n_sv      = colSums(geno(vcf)$GT != "0/0", na.rm = TRUE)
 )
 ggplot(sv_burden, aes(condition, n_sv, fill = condition)) +
   geom_boxplot() +
-  labs(title = "SV burden: CVID vs control")
+  labs(title = "SV burden: disease vs control")
 ```
 
 ---
@@ -338,7 +338,7 @@ awk 'NR>1 {sum+=$5; count++} END {print "Mean block length:", sum/count}' \
 
 ### 4. CpG Methylation Analysis
 
-**Differential methylation (CVID vs control) in R:**
+**Differential methylation (disease vs control) in R:**
 ```r
 library(DSS)
 library(bsseq)
@@ -349,16 +349,16 @@ read_bedmethyl <- function(f) {
   data.frame(chr=df$V1, pos=df$V2, N=df$V5, X=round(df$V5 * df$V10/100))
 }
 
-cvid_data    <- lapply(cvid_bedmethyl_files, read_bedmethyl)
+patient_data    <- lapply(patient_bedmethyl_files, read_bedmethyl)
 control_data <- lapply(control_bedmethyl_files, read_bedmethyl)
 
 bs <- makeBSseqData(
-  c(cvid_data, control_data),
-  sampleNames = c(cvid_ids, control_ids)
+  c(patient_data, control_data),
+  sampleNames = c(patient_ids, control_ids)
 )
 
 # DML test + DMR calling
-dml  <- DMLtest(bs, group1 = cvid_ids, group2 = control_ids, smoothing = TRUE)
+dml  <- DMLtest(bs, group1 = patient_ids, group2 = control_ids, smoothing = TRUE)
 dmrs <- callDMR(dml, p.threshold = 0.05, minLen = 50, minCG = 3)
 ```
 
@@ -368,9 +368,9 @@ dmrs <- callDMR(dml, p.threshold = 0.05, minLen = 50, minCG = 3)
 bedtools intersect -a dmrs.bed -b bcell_enhancers_hg38.bed -wo \
     > dmrs_bcell_enhancers.bed
 
-# Overlap with CVID gene promoters (±2kb TSS)
-bedtools intersect -a dmrs.bed -b cvid_promoters_2kb.bed -wo \
-    > dmrs_cvid_promoters.bed
+# Overlap with immunodeficiency gene promoters (±2kb TSS)
+bedtools intersect -a dmrs.bed -b imm_promoters_2kb.bed -wo \
+    > dmrs_imm_promoters.bed
 ```
 
 **Allele-specific methylation (hap1 vs hap2):**
@@ -391,11 +391,11 @@ asm_hits  <- asm[asm$delta > 0.20, ]
 **Link SNV/LOH → Methylation → Expression:**
 ```bash
 # Find DMRs co-occurring with LOH regions
-bedtools intersect -a dmrs_cvid_promoters.bed -b loh_regions.bed -wo \
+bedtools intersect -a dmrs_imm_promoters.bed -b loh_regions.bed -wo \
     > loh_with_methylation.bed
 ```
 
-Key biological question: in CVID patients with LOH at a gene locus, does the remaining allele show hypermethylation (allele-specific methylation from hap1/hap2 bedMethyl)? This two-hit epigenetic mechanism would be a strong mechanistic finding.
+Key biological question: in immunodeficiency patients with LOH at a gene locus, does the remaining allele show hypermethylation (allele-specific methylation from hap1/hap2 bedMethyl)? This two-hit epigenetic mechanism would be a strong mechanistic finding.
 
 **Recommended R packages:**
 
@@ -444,4 +444,4 @@ Key biological question: in CVID patients with LOH at a gene locus, does the rem
 
 ---
 
-*CVID Multi-Omic Study — CSC Arkku | PacBio HiFi WGS pipeline*
+*Multi-Omic Immune Cells Study — CSC Arkku | PacBio HiFi WGS pipeline*
