@@ -1,7 +1,7 @@
 # 🧬 PacBio HiFi Long-Read Sequencing Pipeline
 
 > Nextflow DSL2 pipeline for alignment, SNV/indel calling, structural variant calling, haplotype phasing, and CpG methylation profiling from PacBio HiFi whole genome sequencing data.  
-> Designed for the CVID multi-omic study — 20 CVID patients + 50 controls.  
+> Designed for multi-omic study of the immune cells.  
 > Platform: **CSC Arkku** | Executor: **SLURM** | Containers: **Singularity**
 
 ---
@@ -89,8 +89,8 @@ Create `samplesheet.csv` with local paths to unaligned BAMs on Arkku scratch:
 
 ```csv
 sample,condition,bam
-CVID_01,CVID,/scratch/project_2xxxxxxx/data/CVID_01/m64145_240117_141650.bcAd1056T--bcAd1056T.bam
-CVID_02,CVID,/scratch/project_2xxxxxxx/data/CVID_02/m84212_240222_154443_s4.hifi_reads.bcAd1023T.bam
+Patient01,disease,/scratch/project_2xxxxxxx/data/patient_01/run1--barcode.bam
+Patient02,disease,/scratch/project_2xxxxxxx/data/patient_02/run2.hifi_reads.barcode.bam
 CTRL_01,control,/scratch/project_2xxxxxxx/data/CTRL_01/sample.bam
 CTRL_02,control,/scratch/project_2xxxxxxx/data/CTRL_02/sample.bam
 ```
