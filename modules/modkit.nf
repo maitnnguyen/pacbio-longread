@@ -2,6 +2,8 @@ process MODKIT_PILEUP {
     tag "${sample}"
     publishDir "${params.outdir}/methylation_modkit/${sample}", mode: 'copy'
 
+    container params.modkit_container
+    
     input:
     tuple val(sample), val(condition), path(bam), path(bai)
     path ref

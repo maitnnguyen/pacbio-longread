@@ -2,6 +2,8 @@ process PB_CPG_TOOLS {
     tag "${sample}"
     publishDir "${params.outdir}/methylation/${sample}", mode: 'copy'
 
+    container params.pb_cpg_container
+
     input:
     tuple val(sample), val(condition), path(bam), path(bai)
     path ref

@@ -1,5 +1,6 @@
 process PBSV_DISCOVER {
     tag "${sample}"
+    container params.pbsv_container
 
     input:
     tuple val(sample), val(condition), path(bam), path(bai)
@@ -20,6 +21,7 @@ process PBSV_DISCOVER {
 process PBSV_CALL {
     tag "${sample}"
     publishDir "${params.outdir}/sv_pbsv/${sample}", mode: 'copy'
+    container params.pbsv_container
 
     input:
     tuple val(sample), val(condition), path(svsigs)

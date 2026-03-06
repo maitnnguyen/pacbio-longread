@@ -6,6 +6,18 @@ include { SNIFFLES2                   } from './modules/sniffles2'
 include { PB_CPG_TOOLS                } from './modules/pb_cpg_tools'
 include { MODKIT_PILEUP               } from './modules/modkit'
 
+// Parameters
+params.genome  = "/home/arkku/group/ics/tools/refdata-gex-GRCh38-2024-A"
+params.outdir         = "${projectDir}/pacbio_results"
+
+// Container paths
+params.container_cache      = '/home/arkku/group/ics/tools/singularity_cache'
+params.pbsv_container       = "${params.container_cache}/pbsv_2.9.0.sif"
+params.sniffles2_container  = "${params.container_cache}/sniffles_2.4.sif"
+params.pb_cpg_container     = "${params.container_cache}/pb_cpg_tools_2.3.2.sif"
+params.modkit_container     = "${params.container_cache}/modkit_0.4.3.sif"
+
+
 workflow {
 
     // Parse samplesheet

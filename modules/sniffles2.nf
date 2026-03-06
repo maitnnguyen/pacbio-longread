@@ -1,6 +1,7 @@
 process SNIFFLES2 {
     tag "${sample}"
     publishDir "${params.outdir}/sv_sniffles/${sample}", mode: 'copy'
+    container params.sniffles_container
 
     input:
     tuple val(sample), val(condition), path(bam), path(bai)
