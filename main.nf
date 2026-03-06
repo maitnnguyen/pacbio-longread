@@ -1,50 +1,58 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl = 2
 
-include { PBSV_DISCOVER; PBSV_CALL   } from './modules/pbsv'
-include { SNIFFLES2                   } from './modules/sniffles2'
-include { PB_CPG_TOOLS                } from './modules/pb_cpg_tools'
-include { MODKIT_PILEUP               } from './modules/modkit'
-
-// Parameters
-params.genome  = "/home/arkku/group/ics/tools/refdata-gex-GRCh38-2024-A"
-params.outdir         = "${projectDir}/pacbio_results"
-
-// Container paths
-params.container_cache      = '/home/arkku/group/ics/tools/singularity_cache'
-params.pbsv_container       = "${params.container_cache}/pbsv_2.9.0.sif"
-params.sniffles2_container  = "${params.container_cache}/sniffles_2.4.sif"
-params.pb_cpg_container     = "${params.container_cache}/pb_cpg_tools_2.3.2.sif"
-params.modkit_container     = "${params.container_cache}/modkit_0.4.3.sif"
-
+include { PBMM2_ALIGN                    } from './modules/pbmm2'
+include { PBSV_DISCOVER; PBSV_CALL       } from './modules/pbsv'
+include { SNIFFLES2                      } from './modules/sniffles2'
+include { SNIFFLES2_COHORT               } from './modules/sniffles2'
+include { DEEPVARIANT                    } from './modules/deepvariant'
+include { HIPHASE                        } from './modules/hiphase'
+include { PB_CPG_TOOLS                   } from './modules/pb_cpg_tools'
+include { MODKIT_PILEUP                  } from './modules/modkit'
 
 workflow {
 
-    // Parse samplesheet
+    // ── Parse samplesheet ──────────────────────────────────────────────────
     Channel
         .fromPath(params.samplesheet)
         .splitCsv(header: true)
         .map { row ->
-            def bam_file = file(row.bam)
-            def bai_file = file("${row.bam}.bai")
-            tuple(row.sample, row.condition, bam_file, bai_file)
+            def bam = file(row.bam)
+            def pbi = file("${row.bam}.pbi")
+            tuple(row.sample, row.condition, bam, pbi)
         }
         .set { ch_samples }
 
-    // SV calling - pbsv (2 steps)
-    PBSV_DISCOVER(ch_samples, params.ref)
-    PBSV_CALL(
-        PBSV_DISCOVER.out.svsig
-            .groupTuple(by: [0,1]),   // group by sample+condition
+    // ── Step 1: Align unaligned HiFi BAM to hg38 with pbmm2 ───────────────
+    PBMM2_ALIGN(ch_samples, params.ref)
+
+    // ── Step 2: SV calling ─────────────────────────────────────────────────
+    // pbsv: discover svsig per sample, then call SVs
+    PBSV_DISCOVER(PBMM2_ALIGN.out.bam, params.ref)
+    PBSV_CALL(PBSV_DISCOVER.out.svsig, params.ref)
+
+    // Sniffles2: per-sample VCF + .snf for cohort calling
+    SNIFFLES2(PBMM2_ALIGN.out.bam, params.ref)
+
+    // Sniffles2 cohort: collect all .snf files → joint genotyped VCF
+    SNIFFLES2_COHORT(
+        SNIFFLES2.out.snf.collect(),
         params.ref
     )
 
-    // SV calling - Sniffles2 (alternative/complementary)
-    SNIFFLES2(ch_samples, params.ref)
+    // ── Step 3: SNV/Indel calling with DeepVariant ─────────────────────────
+    DEEPVARIANT(PBMM2_ALIGN.out.bam, params.ref)
 
-    // Methylation calling - pb-CpG-tools
-    PB_CPG_TOOLS(ch_samples, params.ref)
+    // ── Step 4: Joint phasing with HiPhase (SNVs + SVs together) ──────────
+    HIPHASE(
+        PBMM2_ALIGN.out.bam
+            .join(DEEPVARIANT.out.vcf)
+            .join(PBSV_CALL.out.vcf),
+        params.ref
+    )
 
-    // Methylation manipulation - modkit
-    MODKIT_PILEUP(ch_samples, params.ref)
+    // ── Step 5: CpG methylation calling ───────────────────────────────────
+    // Use haplotagged BAM from HiPhase for phased methylation
+    PB_CPG_TOOLS(HIPHASE.out.haplotagged_bam, params.ref)
+    MODKIT_PILEUP(HIPHASE.out.haplotagged_bam, params.ref)
 }
