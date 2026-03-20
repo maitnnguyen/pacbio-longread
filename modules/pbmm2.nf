@@ -17,7 +17,6 @@ process PBMM2_ALIGN {
         --sort \\
         --unmapped \\
         -j ${task.cpus} \\
-        --rg "@RG\\tID:${sample}\\tSM:${sample}\\tPL:PACBIO" \\
         ${ref} \\
         ${bam} \\
         ${sample}.aligned.bam
@@ -25,3 +24,5 @@ process PBMM2_ALIGN {
     samtools index ${sample}.aligned.bam
     """
 }
+//    --rg "@RG\\tID:${sample}\\tSM:${sample}\\tPL:PACBIO" \\
+    
