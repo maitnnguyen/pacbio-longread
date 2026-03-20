@@ -22,3 +22,26 @@ process SNIFFLES2 {
         --sample-id ${sample}
     """
 }
+
+process SNIFFLES2_COHORT {
+    publishDir "${params.outdir}/sv_cohort", mode: 'copy'
+
+    input:
+    path snf_files
+    path ref
+
+    output:
+    path "cohort.sniffles.vcf.gz",     emit: vcf
+    path "cohort.sniffles.vcf.gz.tbi", emit: tbi
+
+    script:
+    """
+    sniffles \\
+        --input ${snf_files} \\
+        --vcf cohort.sniffles.vcf.gz \\
+        --reference ${ref} \\
+        --threads ${task.cpus}
+
+    tabix -p vcf cohort.sniffles.vcf.gz
+    """
+}
