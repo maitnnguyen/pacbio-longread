@@ -3,8 +3,8 @@ nextflow.enable.dsl = 2
 
 include { PBMM2_ALIGN                    } from './modules/pbmm2'
 include { PBSV_DISCOVER; PBSV_CALL       } from './modules/pbsv'
-include { SNIFFLES2; SNIFFLES2_COHORT    } from './modules/sniffles2'
-//include { SNIFFLES2_COHORT               } from './modules/sniffles2'
+include { SNIFFLES2                      } from './modules/sniffles2'
+include { SNIFFLES2_COHORT               } from './modules/sniffles2'
 include { DEEPVARIANT                    } from './modules/deepvariant'
 include { HIPHASE                        } from './modules/hiphase'
 include { PB_CPG_TOOLS                   } from './modules/pb_cpg_tools'
