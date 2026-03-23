@@ -1,2 +1,5 @@
 .nextflow*
 tmp*
+logs/
+results/
+work/
