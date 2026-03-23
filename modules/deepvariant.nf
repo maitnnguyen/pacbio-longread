@@ -13,9 +13,9 @@ process DEEPVARIANT {
     script:
     """
     # Index reference if not already indexed
-    #if [ ! -f ${ref}.fai ]; then
-    #    samtools faidx ${ref}
-    #fi
+    if [ ! -f ${ref}.fai ]; then
+        samtools faidx ${ref}
+    fi
 
     run_deepvariant \\
         --model_type PACBIO \\
