@@ -37,7 +37,7 @@ workflow {
     SNIFFLES2(PBMM2_ALIGN.out.bam, params.ref)
 
     // Mosaic mode to obtain somatic and rare SVs
-    SNIIFLES2_MOSAIC(PBMM2_ALIGN.out.bam, params.ref)
+    SNIFFLES2_MOSAIC(PBMM2_ALIGN.out.bam, params.ref)
 
     // Sniffles2 cohort: collect all .snf files → joint genotyped VCF
     SNIFFLES2_COHORT(
