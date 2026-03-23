@@ -26,6 +26,6 @@ process DEEPVARIANT {
         --sample_name ${sample} \\
         --num_shards ${task.cpus}
 
-    #tabix -p vcf ${sample}.deepvariant.vcf.gz
+    tabix -p vcf ${sample}.deepvariant.vcf.gz
     """
 }
