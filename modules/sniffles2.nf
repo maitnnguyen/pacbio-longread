@@ -48,7 +48,7 @@ process SNIFFLES2_COHORT {
 
 process SNIFFLES2_MOSAIC {
     tag "${sample}"
-    publishDir "${params.outdir}/sv_sniffles/${sample}", mode: 'copy'
+    publishDir "${params.outdir}/sv_sniffles_mosaic/${sample}", mode: 'copy'
     container params.sniffles_container
 
     input:
