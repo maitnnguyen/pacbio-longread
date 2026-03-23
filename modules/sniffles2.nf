@@ -38,9 +38,11 @@ process SNIFFLES2_COHORT {
     """
     sniffles \\
         --input ${snf_files} \\
-        --vcf cohort.sniffles.vcf.gz \\
+        --vcf out.vcf.gz \\
         --reference ${ref} \\
         --threads ${task.cpus}
+    
+    bcftools sort out.vcf.gz -Oz -o cohort.sniffles.vcf.gz
 
     tabix -p vcf cohort.sniffles.vcf.gz
     """
