@@ -5,6 +5,7 @@ include { PBMM2_ALIGN                    } from './modules/pbmm2'
 include { PBSV_DISCOVER; PBSV_CALL       } from './modules/pbsv'
 include { SNIFFLES2                      } from './modules/sniffles2'
 include { SNIFFLES2_COHORT               } from './modules/sniffles2'
+include { SNIFFLES2_MOSAIC; SNIFFLES2_COHORT as SNIFFLES2_COHORT_MOSAIC } from './modules/sniffles2'
 include { DEEPVARIANT                    } from './modules/deepvariant'
 include { HIPHASE                        } from './modules/hiphase'
 include { PB_CPG_TOOLS                   } from './modules/pb_cpg_tools'
@@ -32,10 +33,20 @@ workflow {
     PBSV_CALL(PBSV_DISCOVER.out.svsig, params.ref)
 
     // Sniffles2: per-sample VCF + .snf for cohort calling
+    // process SNIFFLES2 is for germline SV calling; we can also run it in "mosaic" mode for somatic SVs if needed
     SNIFFLES2(PBMM2_ALIGN.out.bam, params.ref)
+
+    // Mosaic mode to obtain somatic and rare SVs
+    SNIIFLES2_MOSAIC(PBMM2_ALIGN.out.bam, params.ref)
 
     // Sniffles2 cohort: collect all .snf files → joint genotyped VCF
     SNIFFLES2_COHORT(
+        SNIFFLES2.out.snf.collect(),
+        params.ref
+    )
+
+    // Sniffles2 cohort: collect all .snf files from mosaic mode → joint genotyped VCF
+    SNIFFLES2_COHORT_MOSAIC(
         SNIFFLES2.out.snf.collect(),
         params.ref
     )
