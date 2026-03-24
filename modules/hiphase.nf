@@ -4,20 +4,20 @@ process HIPHASE {
     //container params.hiphase_container
 
     input:
-    tuple val(sample), //val(condition),
+    tuple val(sample), val(condition),
           path(bam), path(bai),
           path(snv_vcf), path(snv_tbi),
           path(sv_vcf),  path(sv_tbi)
     path ref
 
     output:
-    tuple val(sample), //val(condition),
+    tuple val(sample), val(condition),
           path("${sample}.haplotagged.bam"),
           path("${sample}.haplotagged.bam.bai"),     emit: haplotagged_bam
-    tuple val(sample), //val(condition),
+    tuple val(sample), val(condition),
           path("${sample}.phased.snv.vcf.gz"),
           path("${sample}.phased.snv.vcf.gz.tbi"),   emit: phased_snv_vcf
-    tuple val(sample), //val(condition),
+    tuple val(sample), val(condition),
           path("${sample}.phased.sv.vcf.gz"),
           path("${sample}.phased.sv.vcf.gz.tbi"),    emit: phased_sv_vcf
     path "${sample}.hiphase.stats.tsv",               emit: stats

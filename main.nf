@@ -55,10 +55,23 @@ workflow {
     DEEPVARIANT(PBMM2_ALIGN.out.bam, params.ref)
 
     // ── Step 4: Joint phasing with HiPhase (SNVs + SVs together) ──────────
+    // ── Step 4: Joint phasing with HiPhase ────────────────────────
+    // Strip condition from DeepVariant and pbsv channels before joining
+    ch_deepvariant = DEEPVARIANT.out.vcf
+        .map { sample, condition, vcf, tbi -> tuple(sample, condition, vcf, tbi) }
+
+    ch_pbsv = PBSV_CALL.out.vcf
+        .map { sample, condition, vcf, tbi -> tuple(sample, condition, vcf, tbi) }
+
     HIPHASE(
         PBMM2_ALIGN.out.bam
-            .join(DEEPVARIANT.out.vcf)
-            .join(PBSV_CALL.out.vcf),
+            .join(DEEPVARIANT.out.vcf.map { sample, cond, vcf, tbi ->
+                tuple(sample, vcf, tbi) })
+            .join(PBSV_CALL.out.vcf.map { sample, cond, vcf, tbi ->
+                tuple(sample, vcf, tbi) })
+            .map { sample, cond, bam, bai, snv_vcf, snv_tbi, sv_vcf, sv_tbi ->
+                tuple(sample, cond, bam, bai, snv_vcf, snv_tbi, sv_vcf, sv_tbi)
+            },
         params.ref
     )
 
