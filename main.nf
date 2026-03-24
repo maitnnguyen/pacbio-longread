@@ -40,16 +40,16 @@ workflow {
     SNIFFLES2_MOSAIC(PBMM2_ALIGN.out.bam, params.ref)
 
     // Sniffles2 cohort: collect all .snf files → joint genotyped VCF
-    SNIFFLES2_COHORT(
-        SNIFFLES2.out.snf.collect(),
-        params.ref
-    )
+    //SNIFFLES2_COHORT(
+    //    SNIFFLES2.out.snf.collect(),
+    //    params.ref
+    //)
 
     // Sniffles2 cohort: collect all .snf files from mosaic mode → joint genotyped VCF
-    SNIFFLES2_COHORT_MOSAIC(
-        SNIFFLES2.out.snf.collect(),
-        params.ref
-    )
+    //SNIFFLES2_COHORT_MOSAIC(
+    //    SNIFFLES2.out.snf.collect(),
+    //    params.ref
+    //)
 
     // ── Step 3: SNV/Indel calling with DeepVariant ─────────────────────────
     DEEPVARIANT(PBMM2_ALIGN.out.bam, params.ref)
