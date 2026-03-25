@@ -26,6 +26,13 @@ process HIPHASE {
 
     script:
     """
+    # ── Fix SM tag in BAM to match sample ID ──────────────────────
+    samtools view -H ${bam} | \\
+        sed 's/SM:[^\t]*/SM:${sample}/g' | \\
+        samtools reheader - ${bam} > ${sample}.reheadered.bam
+
+    samtools index ${sample}.reheadered.bam
+
     # ── Fix sample name in pbsv VCF to match sample ID ────────────
     echo "${sample}" > sample_name.txt
 
@@ -40,7 +47,7 @@ process HIPHASE {
     hiphase \\
         --threads ${task.cpus} \\
         --reference ${ref} \\
-        --bam ${bam} \\
+        --bam ${sample}.reheadered.bam \\
         --vcf ${snv_vcf} \\
         --vcf ${sample}.sv.renamed.vcf.gz \\
         --output-vcf ${sample}.phased.snv.vcf.gz \\
