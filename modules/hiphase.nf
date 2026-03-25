@@ -42,7 +42,7 @@ process HIPHASE {
         --reference ${ref} \\
         --bam ${bam} \\
         --vcf ${snv_vcf} \\
-        --vcf ${sv_vcf} \\
+        --vcf ${sample}.sv.renamed.vcf.gz \\
         --output-vcf ${sample}.phased.snv.vcf.gz \\
         --output-vcf ${sample}.phased.sv.vcf.gz \\
         --output-bam ${sample}.haplotagged.bam \\
