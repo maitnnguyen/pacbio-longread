@@ -26,6 +26,17 @@ process HIPHASE {
 
     script:
     """
+    # ── Fix sample name in pbsv VCF to match sample ID ────────────
+    echo "${sample}" > sample_name.txt
+
+    bcftools reheader \\
+        --samples sample_name.txt \\
+        ${sv_vcf} \\
+        -o ${sample}.sv.renamed.vcf.gz
+
+    tabix -f -p vcf ${sample}.sv.renamed.vcf.gz
+    
+    # ── Run HiPhase with renamed VCF ──────────────────────────────
     hiphase \\
         --threads ${task.cpus} \\
         --reference ${ref} \\
