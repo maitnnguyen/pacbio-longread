@@ -19,10 +19,9 @@ process MODKIT_PILEUP {
         ${sample}.modkit.bed \\
         --ref ${ref} \\
         --threads ${task.cpus} \\
-        --preset traditional \\
         --log-filepath ${sample}.modkit.log \\
         --combine-strands \\
-        --cpg
+        --cpg 
 
     bgzip ${sample}.modkit.bed
     """
