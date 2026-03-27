@@ -20,7 +20,7 @@ process PB_CPG_TOOLS {
     aligned_bam_to_cpg_scores \\
         --bam ${bam} \\
         --output-prefix ${sample} \\
-        --model ${MODEL_PATH} \\
+        --model \${MODEL_PATH} \\
         --ref ${ref} \\
         --threads ${task.cpus} \\
         --min-coverage 5 --min-mapq 20
