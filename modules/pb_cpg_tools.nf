@@ -18,8 +18,8 @@ process PB_CPG_TOOLS {
     aligned_bam_to_cpg_scores \\
         --bam ${bam} \\
         --output-prefix ${sample} \\
-        --genome ${ref} \\
+        --ref ${ref} \\
         --threads ${task.cpus} \\
-        --min-coverage 10
+        --min-coverage 5 --min-mapq 20
     """
 }
