@@ -15,9 +15,12 @@ process PB_CPG_TOOLS {
 
     script:
     """
+    MODEL_PATH="/opt/pb-CpG-tools-v2.3.2-x86_64-unknown-linux-gnu/models/pileup_calling_model.v1.tflite"
+    
     aligned_bam_to_cpg_scores \\
         --bam ${bam} \\
         --output-prefix ${sample} \\
+        --model ${MODEL_PATH} \\
         --ref ${ref} \\
         --threads ${task.cpus} \\
         --min-coverage 5 --min-mapq 20
