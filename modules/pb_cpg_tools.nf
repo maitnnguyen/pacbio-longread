@@ -23,6 +23,8 @@ process PB_CPG_TOOLS {
         --model \${MODEL_PATH} \\
         --ref ${ref} \\
         --threads ${task.cpus} \\
-        --min-coverage 5 --min-mapq 20
+        --min-coverage 5 --min-mapq 20 
+    # v2.3.2 does not gzip automatically
+    gzip *.bed
     """
 }
