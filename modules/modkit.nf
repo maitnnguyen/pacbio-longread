@@ -14,11 +14,6 @@ process MODKIT_PILEUP {
 
     script:
     """
-    # Index reference if not already indexed
-    if [ ! -f ${ref}.fai ]; then
-        samtools faidx ${ref}
-    fi
-    
     modkit pileup \\
         ${bam} \\
         ${sample}.modkit.bed \\
