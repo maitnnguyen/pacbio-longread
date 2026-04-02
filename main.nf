@@ -78,5 +78,9 @@ workflow {
     // ── Step 5: CpG methylation calling ───────────────────────────────────
     // Use haplotagged BAM from HiPhase for phased methylation
     PB_CPG_TOOLS(HIPHASE.out.haplotagged_bam, params.ref)
-    MODKIT_PILEUP(HIPHASE.out.haplotagged_bam, params.ref)
-}
+    // Define ref and fai as separate channels (for modkit as sif cannot see fai )
+    ch_ref     = file(params.ref)
+    ch_ref_fai = file("${params.ref}.fai")
+    MODKIT_PILEUP(HIPHASE.out.haplotagged_bam, 
+                file(params.ref),
+                file("${params.ref}.fai"))

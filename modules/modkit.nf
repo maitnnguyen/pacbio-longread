@@ -7,6 +7,7 @@ process MODKIT_PILEUP {
     input:
     tuple val(sample), val(condition), path(bam), path(bai)
     path ref
+    path ref_fai
 
     output:
     tuple val(sample), val(condition), path("${sample}.modkit.bed.gz"), emit: bedmethyl
