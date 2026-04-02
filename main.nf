@@ -84,3 +84,5 @@ workflow {
     MODKIT_PILEUP(HIPHASE.out.haplotagged_bam, 
                 file(params.ref),
                 file("${params.ref}.fai"))
+
+}
