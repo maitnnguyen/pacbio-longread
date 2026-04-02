@@ -10,7 +10,7 @@ process MODKIT_PILEUP {
     path ref_fai
 
     output:
-    tuple val(sample), val(condition), path("${sample}.modkit.bed.gz"), emit: bedmethyl
+    tuple val(sample), val(condition), path("${sample}.modkit.bed"), emit: bedmethyl
     path "${sample}.modkit.log",                                        emit: log
 
     script:
@@ -24,6 +24,6 @@ process MODKIT_PILEUP {
         --combine-strands \\
         --cpg 
 
-    bgzip ${sample}.modkit.bed
+    #bgzip ${sample}.modkit.bed
     """
 }
